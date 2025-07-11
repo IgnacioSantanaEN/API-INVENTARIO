@@ -26,11 +26,11 @@ import org.springframework.web.bind.annotation.RequestBody;
 @RequestMapping("/api/inventario")
 public class InventarioController {
     @Autowired
-    private InventarioService inventarioService;
+    private InventarioService service;
 
     @GetMapping("/")
     public ResponseEntity<?> EnlistarProductos() {
-        List<InventarioDTO> productos= inventarioService.GetAll();
+        List<InventarioDTO> productos= service.GetAll();
 
        if(productos.isEmpty()){
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
@@ -42,7 +42,7 @@ public class InventarioController {
 
     @GetMapping("/{id}")
     public ResponseEntity<?> ConsultarProducto(@PathVariable Integer id){
-        Inventario inventario = inventarioService.findByid(id);
+        Inventario inventario = service.findByid(id);
 
         if(inventario == null){
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
@@ -54,7 +54,7 @@ public class InventarioController {
 
     @PostMapping
     public ResponseEntity<?> RegistrarInventario(@RequestBody Inventario inventario){
-        Inventario nuevo = inventarioService.save(inventario);
+        Inventario nuevo = service.save(inventario);
 
         if(nuevo == null){
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
@@ -67,10 +67,11 @@ public class InventarioController {
     
     @PutMapping("/{id}")
     public ResponseEntity<?> ModificarProducto(@PathVariable Integer id, @RequestBody Inventario existente){
-        Inventario modificado = inventarioService.UpdateById(id, existente);
+        Inventario modificado = service.UpdateById(id, existente);
 
         if(modificado == null){
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new Mensaje("Producto no encontrado"));
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                .body(new Mensaje("Producto no encontrado"));
         }
 
         return ResponseEntity.ok(modificado);
